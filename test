@@ -30,3 +30,7 @@ while True:
         messagebox.showwarning(message="UV_Intensity NOT GOOD", title="UV_NOTIFICATION") 
         n = ToastNotifier() 
         n.show_toast("UV_NOTIFICATION", "ERROR", duration = 10)
+
+from tkinter import messagebox
+
+messagebox.showwarning(message="Hello, world!", title="My Python Application")
