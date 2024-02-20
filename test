@@ -1,23 +1,32 @@
 from oauth2client.service_account import ServiceAccountCredentials
 import gspread
+from win10toast import ToastNotifier
+from tkinter import messagebox 
 
 # Define your URL, scope, and credentials
 url = "https://docs.google.com/spreadsheets/d/1WJEOfHH5TXH1-EuWHqPptbt4tVG43VXqwBnzkqbujbQ/edit#gid=0"
 scope = ['https://www.googleapis.com/auth/spreadsheets']
 credentials = ServiceAccountCredentials.from_json_keyfile_name('keys.json', scope)
 
-# Authorize and open the worksheet
-client = gspread.authorize(credentials)
-sheet = client.open_by_url(url)
-worksheet = sheet.get_worksheet(0)
+while True:
+    # Authorize and open the worksheet
+    client = gspread.authorize(credentials)
+    sheet = client.open_by_url(url)
+    worksheet = sheet.get_worksheet(0)
 
-# Define the starting row and column index (E is the 5th column)
-start_row = 3
-start_column = 5  # E is the 5th column
-
-# Fetch data from the specified range
-data = worksheet.get(start_row, start_column, worksheet.row_count, 1)
-
-# Print the fetched data
-for row in data:
-    print(row[0])
+    UV_Intensity = float(worksheet.col_values(13)[-1])
+    date_values = worksheet.col_values(1)[-1]
+    print("Date:\t\t" + str(date_values) + "\n" + "UV_Intensity:\t" + str(UV_Intensity))
+    if UV_Intensity <= 21.6 or UV_Intensity >= 26.4:
+        print("####################### CODE RED #######################")
+        messagebox.showwarning(message="UV_Intensity NOT GOOD", title="UV_NOTIFICATION")
+        n = ToastNotifier() 
+        n.show_toast("UV_NOTIFICATION", "UV_Intensity NOT GOOD", duration = 10)
+    elif UV_Intensity > 21.6 and UV_Intensity < 26.4:
+        print("GOOD")
+        break
+    else:
+        print("ERROR")
+        messagebox.showwarning(message="UV_Intensity NOT GOOD", title="UV_NOTIFICATION") 
+        n = ToastNotifier() 
+        n.show_toast("UV_NOTIFICATION", "ERROR", duration = 10)
